@@ -1,0 +1,107 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://Player.gd" type="Script" id=1]
+[ext_resource path="res://scene/Sword.scn" type="PackedScene" id=2]
+
+[sub_resource type="BoxShape" id=1]
+
+[sub_resource type="CubeMesh" id=2]
+
+[sub_resource type="Animation" id=3]
+resource_name = "New Anim"
+
+[sub_resource type="Animation" id=4]
+resource_name = "Wallrunning"
+
+[sub_resource type="Animation" id=5]
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:translation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ), Vector3( 0, 0.2, 0 ), Vector3( 0, 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=6]
+resource_name = "flip"
+tracks/0/type = "value"
+tracks/0/path = NodePath("../..:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.5, 0.8, 1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ), Vector3( 90, 0, 0 ), Vector3( 180, 0, 0 ), Vector3( 270, 0, 0 ), Vector3( 360, 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=7]
+resource_name = "run"
+
+[sub_resource type="Animation" id=8]
+length = 0.8
+
+[sub_resource type="BoxShape" id=9]
+
+[node name="KinematicBody" type="KinematicBody" groups=[
+"Players",
+]]
+transform = Transform( 0.325008, 0, 0, 0, 1.29442, 0, 0, 0, 0.373719, 0, 0, 0 )
+script = ExtResource( 1 )
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="Head" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.747479, 0 )
+
+[node name="Camera" type="Camera" parent="Head"]
+transform = Transform( 3.07685, 0, 0, 0, 0.772547, 0, 0, 0, 2.67581, 0, 0, 0 )
+
+[node name="Aimcast" type="RayCast" parent="Head/Camera"]
+enabled = true
+cast_to = Vector3( 0, 0, -10 )
+
+[node name="ColorRect" type="ColorRect" parent="Head/Camera"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -5.5
+margin_top = -7.0
+margin_right = 5.5
+margin_bottom = 7.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Head/Camera"]
+"anims/New Anim" = SubResource( 3 )
+anims/Wallrunning = SubResource( 4 )
+anims/bobbing = SubResource( 5 )
+anims/flip = SubResource( 6 )
+anims/run = SubResource( 7 )
+anims/shoot = SubResource( 8 )
+
+[node name="Sword" parent="Head/Camera" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 0.187793, 0.982209, 0, -0.982209, 0.187793, 0.453, -0.299, -0.259 )
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="Area" type="Area" parent="."]
+
+[node name="CollisionShape" type="CollisionShape" parent="Area"]
+shape = SubResource( 9 )
+[connection signal="body_entered" from="Area" to="." method="_on_Area_body_entered"]
